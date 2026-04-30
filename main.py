@@ -1,40 +1,94 @@
+import json
 import requests
-import time
 from datetime import datetime
+from pathlib import Path
 
 URL = "https://wx.10099.com.cn/contact-web/api/busi/qryUserRes"
+CONFIG_FILE = Path(__file__).with_name("config.json")
+CONFIG_KEYS = ("Session", "Access", "User-Agent", "data")
 
-HEADERS = {
+BASE_HEADERS = {
     "Host": "wx.10099.com.cn",
-    "Session": "8a670f4d15be0af224ee1004d7b12a80",
-    "Access": "847d5bc222d1f8ed1d715067b20d3224",
     "content-type": "application/json",
     "Accept-Encoding": "gzip,compress,br,deflate",
-    "User-Agent": (
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 26_4 like Mac OS X) "
-        "AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 "
-        "MicroMessenger/8.0.70(0x1800463a) NetType/WIFI Language/zh_CN"
-    ),
     "Referer": "https://servicewechat.com/wxfa72ff5488bbd1d9/125/page-frame.html",
 }
 
-PAYLOAD = {
-    "data": "xJOqHMJ6wGEstble8V6FS8FduN30P00DBzKATxe+EMYuqj4FEmdVDRQVwwcx6ojONxXQcfEOyu/uipB+pn8fztCm1Vl+79Y9C+lMpV2iSsop5gpzGcR3CZKp6AUfAo1OF3e/IhcKPKYdCQTO3X8m/C0DZiBiO6sn4qd8rnEVo9/RhU1MNfKwNhbsGs93Dzh436aRj+whegaJ/wIzLEMJjXTvBjYugu1ORfX+L1ftW5zvlDrou+kSNUK6v/HqkHsQGRUvRGUSYy1tEBMKkj4aqWqJQlMVB59lCyuTakC69M/2d1aAgQkPPPN4eDeMH80dumXRYtivXooHT0iMfs2tVw=="
-}
+LOGIN_EXPIRED_KEYWORDS = (
+    "登录",
+    "过期",
+    "失效",
+    "重新",
+    "未授权",
+    "认证",
+    "无效",
+    "session",
+    "access",
+    "token",
+)
+
+
+class LoginExpiredError(RuntimeError):
+    pass
 
 
 def kb_to_gb(value):
     return int(value) / 1024 / 1024
 
 
-def query_traffic():
-    resp = requests.post(URL, headers=HEADERS, json=PAYLOAD, timeout=10)
-    resp.raise_for_status()
+def load_config():
+    if not CONFIG_FILE.exists():
+        raise FileNotFoundError(
+            f"未找到 {CONFIG_FILE}，请先运行 extract_curl_config.py 生成配置。"
+        )
+
+    with CONFIG_FILE.open("r", encoding="utf-8") as file:
+        config = json.load(file)
+
+    missing_keys = [key for key in CONFIG_KEYS if not str(config.get(key, "")).strip()]
+    if missing_keys:
+        raise ValueError(f"{CONFIG_FILE} 缺少必要字段：{', '.join(missing_keys)}")
+
+    return {key: str(config[key]).strip() for key in CONFIG_KEYS}
+
+
+def build_headers(config):
+    headers = BASE_HEADERS.copy()
+    headers["Session"] = config["Session"]
+    headers["Access"] = config["Access"]
+    headers["User-Agent"] = config["User-Agent"]
+    return headers
+
+
+def query_traffic(config):
+    resp = requests.post(
+        URL,
+        headers=build_headers(config),
+        json={"data": config["data"]},
+        timeout=10,
+    )
+    try:
+        resp.raise_for_status()
+    except requests.HTTPError as exc:
+        if resp.status_code in (401, 403):
+            raise LoginExpiredError(f"HTTP {resp.status_code}") from exc
+        raise
+
     return resp.json()
+
+
+def is_login_expired(data):
+    status = str(data.get("status", ""))
+    message = str(data.get("message") or data.get("msg") or "")
+    text = f"{status} {message}".lower()
+    return any(keyword in text for keyword in LOGIN_EXPIRED_KEYWORDS)
 
 
 def parse_traffic(data):
     if data.get("status") != "000000":
+        if is_login_expired(data):
+            message = data.get("message") or data.get("msg") or data.get("status")
+            raise LoginExpiredError(f"登录已过期或认证失败：{message}")
         raise RuntimeError(f"接口返回异常：{data.get('message')}")
 
     user_res_list = (
@@ -95,7 +149,26 @@ def print_traffic(result):
         )
 
 
+def wait_for_relogin(error):
+    print(f"\n{error}")
+    print("请重新登录小程序，复制新的 curl，然后运行：")
+    print("python extract_curl_config.py < curl.txt")
+    print("更新 config.json 后按回车重试，按 Ctrl+C 退出。")
+    try:
+        input()
+    except EOFError as exc:
+        raise SystemExit(
+            "未检测到可交互输入，登录信息已过期，请更新 config.json 后重新运行。"
+        ) from exc
+
+
 if __name__ == "__main__":
-    data = query_traffic()
-    result = parse_traffic(data)
-    print_traffic(result)
+    while True:
+        try:
+            config = load_config()
+            data = query_traffic(config)
+            result = parse_traffic(data)
+            print_traffic(result)
+            break
+        except LoginExpiredError as error:
+            wait_for_relogin(error)
