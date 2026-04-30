@@ -1,0 +1,11 @@
+curl 'https://wx.10099.com.cn/contact-web/api/busi/qryUserRes' \
+-X POST \
+-H 'Host: wx.10099.com.cn' \
+-H 'Content-Length: 355' \
+-H 'Session: 8a670f4d15be0af224ee1004d7b12a80' \
+-H 'content-type: application/json' \
+-H 'Access: 87e39c4e44222d7a1d6ddabbd31f8305' \
+-H 'Accept-Encoding: gzip,compress,br,deflate' \
+-H 'User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 26_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.70(0x1800463a) NetType/WIFI Language/zh_CN' \
+-H 'Referer: https://servicewechat.com/wxfa72ff5488bbd1d9/125/page-frame.html' \
+-d '{"data":"C3jPNd7YC8Td+645yTtxc7uOxdhXiSM4YhBUql7dkwdC8Hf83kSqBpvehH6oIOqy/1WGEswY53hmAxKh3/ViHDca28vta1DW61VEnY3ONVRhz8xdCSGy+z0kJ+Qz7Xd62FjKSjg/vi6w6xypROs7dWs8GqqCvg1EPAa29Ff98EL89RLB54pxzJ9da9p+ApEGQqvPXgRmmRY1EbPHzfdcDTQ38tHyJpQvdKbRQDJRwSw1QA99XHjnzu9EgnzpKMv140Yac1lGkMYDYZ0RU29TUieHuhj0fh+Jjkm8JmdprPaVY97METJj/54xWDQkg7/3fH1qgGnsU8qbgngr0D3TPw=="}'
