@@ -119,6 +119,19 @@ def extract_config(curl_text):
     return config
 
 
+def write_config(output, extracted_config):
+    config = {}
+    if output.exists():
+        with output.open("r", encoding="utf-8") as file:
+            config = json.load(file)
+
+    config.update(extracted_config)
+    output.write_text(
+        json.dumps(config, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="从 curl 命令中提取 Session、Access、User-Agent、data 并写入 config.json。"
@@ -148,10 +161,7 @@ def main():
     config = extract_config(curl_text)
 
     output = Path(args.output)
-    output.write_text(
-        json.dumps(config, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8",
-    )
+    write_config(output, config)
     print(f"已更新 {output}")
 
 
