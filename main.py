@@ -1,10 +1,13 @@
 import json
+import os
 import requests
 from datetime import datetime
 from pathlib import Path
 
 URL = "https://wx.10099.com.cn/contact-web/api/busi/qryUserRes"
-CONFIG_FILE = Path(__file__).with_name("config.json")
+CONFIG_FILE = Path(
+    os.environ.get("TRAFFIC_CONFIG_FILE", Path(__file__).with_name("config.json"))
+).expanduser()
 CONFIG_KEYS = ("Session", "Access", "User-Agent", "data")
 
 BASE_HEADERS = {

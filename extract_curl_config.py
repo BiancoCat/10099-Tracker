@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import re
 import shlex
 import sys
@@ -7,7 +8,9 @@ from pathlib import Path
 
 
 CONFIG_KEYS = ("Session", "Access", "User-Agent", "data")
-DEFAULT_OUTPUT = Path(__file__).with_name("config.json")
+DEFAULT_OUTPUT = Path(
+    os.environ.get("TRAFFIC_CONFIG_FILE", Path(__file__).with_name("config.json"))
+).expanduser()
 
 
 def read_interactive_paste():

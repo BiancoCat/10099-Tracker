@@ -1,5 +1,9 @@
+.git
+.idea
+.venv
 __pycache__/
-config.json
+*.pyc
 .DS_Store
+config.json
 data/
 *.curl.txt

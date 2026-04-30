@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>广电流量配置</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #17202a;
+      --muted: #64707d;
+      --line: #d9e0e7;
+      --accent: #1864ab;
+      --accent-strong: #124f86;
+      --danger: #b42318;
+      --success: #087f5b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      background: var(--panel);
+    }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 64px;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 650;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 auto;
+    }
+
+    main {
+      padding: 24px 0 36px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    section {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+    }
+
+    section + section {
+      margin-top: 16px;
+    }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 15px;
+      line-height: 1.3;
+      font-weight: 650;
+    }
+
+    label {
+      display: block;
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 10px;
+      color: var(--text);
+      background: #fff;
+      font: inherit;
+      resize: vertical;
+    }
+
+    textarea {
+      min-height: 112px;
+      line-height: 1.45;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 160px;
+      gap: 12px;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      color: var(--text);
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .toggle input {
+      width: 16px;
+      min-height: 16px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    button {
+      min-height: 36px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 0 12px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button.primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    button.primary:hover {
+      background: var(--accent-strong);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.62;
+    }
+
+    .result {
+      min-height: 120px;
+      margin: 0;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fbfcfd;
+      padding: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .notice {
+      min-height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 9px 10px;
+      color: var(--muted);
+      background: #fff;
+      overflow-wrap: anywhere;
+    }
+
+    .notice.success {
+      border-color: #8ce1c1;
+      color: var(--success);
+      background: #f0fff8;
+    }
+
+    .notice.error {
+      border-color: #ffb4ad;
+      color: var(--danger);
+      background: #fff5f5;
+    }
+
+    @media (max-width: 840px) {
+      .grid,
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        align-items: flex-start;
+        flex-direction: column;
+        justify-content: center;
+        padding: 14px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="brand">
+        <img class="brand-icon" src="/icon.svg" alt="">
+        <h1>广电流量配置</h1>
+      </div>
+      <div class="actions">
+        <button id="refreshConfig">刷新配置</button>
+        <button id="queryTraffic" class="primary">查询流量</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <div>
+        <section>
+          <h2>请求配置</h2>
+          <div class="field">
+            <label for="session">Session</label>
+            <input id="session" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="access">Access</label>
+            <input id="access" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="userAgent">User-Agent</label>
+            <textarea id="userAgent" spellcheck="false"></textarea>
+          </div>
+          <div class="field">
+            <label for="data">data</label>
+            <textarea id="data" spellcheck="false"></textarea>
+          </div>
+          <div class="actions">
+            <button id="saveConfig" class="primary">保存配置</button>
+          </div>
+        </section>
+
+        <section>
+          <h2>curl 更新</h2>
+          <div class="field">
+            <label for="curlText">curl</label>
+            <textarea id="curlText" spellcheck="false"></textarea>
+          </div>
+          <div class="actions">
+            <button id="extractCurl" class="primary">从 curl 更新</button>
+          </div>
+        </section>
+      </div>
+
+      <div>
+        <section>
+          <h2>Bark 通知</h2>
+          <div class="field">
+            <label class="toggle">
+              <input id="barkEnabled" type="checkbox">
+              启用 API 错误提醒
+            </label>
+          </div>
+          <div class="field">
+            <label for="barkUrl">Bark URL 或 Key</label>
+            <input id="barkUrl" autocomplete="off" placeholder="https://api.day.app/你的Key">
+          </div>
+          <div class="field">
+            <label for="barkIconUrl">Bark 图标 URL</label>
+            <input id="barkIconUrl" autocomplete="off" placeholder="https://example.com/icon.png">
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="cooldown">提醒冷却秒数</label>
+              <input id="cooldown" type="number" min="0" step="1">
+            </div>
+            <div class="field">
+              <label>&nbsp;</label>
+              <button id="testBark">测试 Bark</button>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>状态</h2>
+          <div id="notice" class="notice">等待操作。</div>
+        </section>
+
+        <section>
+          <h2>查询结果</h2>
+          <pre id="result" class="result">暂无数据。</pre>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const fields = {
+      session: document.querySelector("#session"),
+      access: document.querySelector("#access"),
+      userAgent: document.querySelector("#userAgent"),
+      data: document.querySelector("#data"),
+      barkEnabled: document.querySelector("#barkEnabled"),
+      barkUrl: document.querySelector("#barkUrl"),
+      barkIconUrl: document.querySelector("#barkIconUrl"),
+      cooldown: document.querySelector("#cooldown"),
+      curlText: document.querySelector("#curlText"),
+      notice: document.querySelector("#notice"),
+      result: document.querySelector("#result"),
+    };
+
+    function setNotice(message, type = "") {
+      fields.notice.textContent = message;
+      fields.notice.className = `notice ${type}`.trim();
+    }
+
+    function fillConfig(config) {
+      fields.session.value = config.Session || "";
+      fields.access.value = config.Access || "";
+      fields.userAgent.value = config["User-Agent"] || "";
+      fields.data.value = config.data || "";
+      fields.barkEnabled.checked = Boolean(config.bark_enabled);
+      fields.barkUrl.value = config.bark_url || "";
+      fields.barkIconUrl.value = config.bark_icon_url || "";
+      fields.cooldown.value = config.bark_cooldown_seconds ?? 300;
+    }
+
+    function collectConfig() {
+      return {
+        Session: fields.session.value,
+        Access: fields.access.value,
+        "User-Agent": fields.userAgent.value,
+        data: fields.data.value,
+        bark_enabled: fields.barkEnabled.checked,
+        bark_url: fields.barkUrl.value,
+        bark_icon_url: fields.barkIconUrl.value,
+        bark_cooldown_seconds: Number(fields.cooldown.value || 0),
+      };
+    }
+
+    async function requestJson(path, options = {}) {
+      const response = await fetch(path, {
+        headers: { "Content-Type": "application/json" },
+        ...options,
+      });
+      const payload = await response.json();
+      if (!response.ok || payload.ok === false) {
+        throw new Error(payload.message || payload.error || `HTTP ${response.status}`);
+      }
+      return payload;
+    }
+
+    async function loadConfig() {
+      const payload = await requestJson("/api/config");
+      fillConfig(payload.config);
+      setNotice("配置已加载。", "success");
+    }
+
+    async function saveConfig() {
+      const payload = await requestJson("/api/config", {
+        method: "POST",
+        body: JSON.stringify(collectConfig()),
+      });
+      fillConfig(payload.config);
+      setNotice("配置已保存。", "success");
+    }
+
+    async function extractCurl() {
+      const payload = await requestJson("/api/extract-curl", {
+        method: "POST",
+        body: JSON.stringify({ curl: fields.curlText.value }),
+      });
+      fillConfig(payload.config);
+      setNotice("已从 curl 更新配置。", "success");
+    }
+
+    async function queryTraffic() {
+      const payload = await requestJson("/traffic?details=1");
+      fields.result.textContent = JSON.stringify(payload, null, 2);
+      setNotice("查询完成。", "success");
+    }
+
+    async function testBark() {
+      const payload = await requestJson("/api/test-bark", {
+        method: "POST",
+        body: JSON.stringify(collectConfig()),
+      });
+      setNotice(payload.sent ? "Bark 测试已发送。" : `Bark 未发送：${payload.reason}`, payload.sent ? "success" : "error");
+    }
+
+    async function run(action) {
+      try {
+        setNotice("处理中...");
+        await action();
+      } catch (error) {
+        setNotice(error.message, "error");
+      }
+    }
+
+    document.querySelector("#refreshConfig").addEventListener("click", () => run(loadConfig));
+    document.querySelector("#saveConfig").addEventListener("click", () => run(saveConfig));
+    document.querySelector("#extractCurl").addEventListener("click", () => run(extractCurl));
+    document.querySelector("#queryTraffic").addEventListener("click", () => run(queryTraffic));
+    document.querySelector("#testBark").addEventListener("click", () => run(testBark));
+
+    run(loadConfig);
+  </script>
+</body>
+</html>
